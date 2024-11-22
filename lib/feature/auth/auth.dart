@@ -81,11 +81,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       builder: (BuildContext context) {
         var isPortrait = AppStyles.isPortraitMode(context);
         return AlertDialog(
-          backgroundColor:
-              ThemeChangeService().getThemeChangeValue() ? AppColor.grey_800 : AppColor.grey_200,
-          surfaceTintColor:
-              ThemeChangeService().getThemeChangeValue() ? AppColor.grey_400 : AppColor.grey_100,
-          title: Text('Setup Biometrics', style: AppStyles.primaryBoldText(context, isPortrait)),
+          backgroundColor: ThemeChangeService().getThemeChangeValue()
+              ? AppColor.grey_800
+              : AppColor.grey_200,
+          surfaceTintColor: ThemeChangeService().getThemeChangeValue()
+              ? AppColor.grey_400
+              : AppColor.grey_100,
+          title: Text('Setup Biometrics',
+              style: AppStyles.primaryBoldText(context, isPortrait)),
           content: Text(
               'Biometrics are supported on your device. Please set up biometrics to proceed.',
               style: AppStyles.customText(context,
@@ -145,6 +148,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       setState(() {
         _isAuthenticating = true;
       });
+
+      // Authenticate using biometrics, prioritize Face ID if available
       authenticated = await auth.authenticate(
         localizedReason: 'Authenticate to access your passwords',
         authMessages: <AuthMessages>[
@@ -153,12 +158,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             cancelButton: 'No thanks',
           ),
           const IOSAuthMessages(
-            cancelButton: 'No thanks',
+            localizedFallbackTitle: 'Use your Face ID',
+            cancelButton: 'Cancel',
           ),
         ],
         options: const AuthenticationOptions(
           stickyAuth: true,
-          useErrorDialogs: true,
+          biometricOnly: true, // Force biometrics only (no passcode fallback)
         ),
       );
       setState(() {
@@ -166,7 +172,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       });
     } on PlatformException catch (e) {
       if (kDebugMode) {
-        print(e);
+        print('Authentication error: $e');
       }
       setState(() {
         _isAuthenticating = false;
