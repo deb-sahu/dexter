@@ -190,8 +190,9 @@ class _PasswordsState extends ConsumerState<Passwords> {
     ThemeChangeService().initializeThemeChange(ref, themeChange);
 
     // Filter passwords to show only those not inside folders
-    var passwordsOutsideFolders =
-        _passwords.where((password) => password.folderId == null || password.folderId == "").toList();
+    var passwordsOutsideFolders = _passwords
+        .where((password) => password.folderId == null || password.folderId == "")
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -439,9 +440,27 @@ class _PasswordsState extends ConsumerState<Passwords> {
                                   },
                                   onAcceptWithDetails: (details) async {
                                     PasswordModel password = details.data;
+                                    // Check if an outside password is moved to a folder
+                                    if (password.folderId == null || password.folderId == '') {
+                                      // Update the password to the folder
+                                      password.folderId = folder.folderId;
+                                      folder.passwordIds.add(password.passwordId);
+
+                                      // Save the updated password and folder
+                                      await CacheService().updatePasswordRecord(password);
+                                      await CacheService().updateFolderRecord(folder);
+
+                                      // Reload the passwords and folders
+                                      setState(() {
+                                        _loadPasswords();
+                                        _loadFolders();
+                                      });
+                                    }
 
                                     // Check if the password is moved to a different folder
-                                    if (password.folderId != folder.folderId) {
+                                    if (password.folderId != folder.folderId &&
+                                        password.folderId != null &&
+                                        password.folderId != '') {
                                       if (password.folderId != null) {
                                         // Remove password from previous folder
                                         var oldFolder = _folders

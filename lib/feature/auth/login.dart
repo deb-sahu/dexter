@@ -113,7 +113,7 @@ class _LoginState extends ConsumerState<Login> with SingleTickerProviderStateMix
                         : Container(),
                   ),
                   Text(
-                    'Safe, Secure, Simple',
+                    'Simple, Safe, Secure',
                     style: AppStyles.customText(context, sizeFactor: 0.039, family: 'OpenSans'),
                     textAlign: TextAlign.center,
                   ),

@@ -87,7 +87,7 @@ class _AddFolderDialogState extends ConsumerState<AddFolderDialog> {
     ThemeChangeService().initializeThemeChange(ref, themeChange);
 
     return SizedBox(
-      height: height * 0.5, // Adjusted height for the folder dialog
+      height: height * 0.75, // Adjusted height for the folder dialog
       child: Padding(
         padding: EdgeInsets.all(width * 0.06),
         child: Column(
