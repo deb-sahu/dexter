@@ -8,7 +8,6 @@ import 'package:password_vault/feature/settings/clear_data_dialog.dart';
 import 'package:password_vault/service/cache/cache_service.dart';
 import 'package:password_vault/service/singletons/theme_change_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:uuid/uuid.dart';
 
 final importChangeProvider = StateProvider<bool>((ref) {
   return false;
