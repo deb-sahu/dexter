@@ -15,8 +15,8 @@ That’s when it hit me: why not create something that solves my problem and, ho
 ---
 
 ## 📲 **Download Now**  
-- **App Store**: [Download on the App Store](https://apps.apple.com/us/app/dexter-password-manager/id6738388602)  
-- **Play Store**: [Get it on Google Play](https://play.google.com/store/apps/details?id=com.adarsh.password_vault)  
+- **App Store**: [Get it on App Store - iOS](https://apps.apple.com/us/app/dexter-password-manager/id6738388602)  
+- **Play Store**: [Get it on Google Play - Android](https://play.google.com/store/apps/details?id=com.adarsh.password_vault)  
 
 ---
 
