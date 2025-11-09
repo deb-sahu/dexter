@@ -77,11 +77,11 @@ All your passwords are stored locally and encrypted on your device with **256-bi
 
 | Launch Screen | Home Screen | Passwords | Favorites |
 |:-------------:|:-----------:|:---------:|:---------:|
-| ![Launch](screenshots/launch-screen.png) | ![Home](screenshots/home.png) | ![Passwords](screenshots/passwords.png) | ![Favorites](screenshots/favorites.png) |
+| <img src="screenshots/launch-screen.png" alt="Launch Screen" width="200"> | <img src="screenshots/home.png" alt="Home Screen" width="200"> | <img src="screenshots/passwords.png" alt="Passwords" width="200"> | <img src="screenshots/favorites.png" alt="Favorites" width="200"> |
 
 | Organizer | History | Settings |
 |:---------:|:-------:|:--------:|
-| ![Organizer](screenshots/organizer.png) | ![History](screenshots/history.png) | ![Settings](screenshots/settings.png) |
+| <img src="screenshots/organizer.png" alt="Organizer" width="200"> | <img src="screenshots/history.png" alt="History" width="200"> | <img src="screenshots/settings.png" alt="Settings" width="200"> |
 
 </div>
 
@@ -94,11 +94,11 @@ All your passwords are stored locally and encrypted on your device with **256-bi
 ### Get Dexter on Your Device
 
 <a href="https://apps.apple.com/us/app/dexter-password-manager/id6738388602">
-  <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp" alt="Download on App Store" height="60">
+  <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp" alt="Download on App Store" height="60" style="vertical-align: middle;">
 </a>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <a href="https://play.google.com/store/apps/details?id=com.adarsh.password_vault">
-  <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Get it on Google Play" height="60">
+  <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Get it on Google Play" height="60" style="vertical-align: middle;">
 </a>
 
 **iOS**: Requires iOS 12.0 or later  
