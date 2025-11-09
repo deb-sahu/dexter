@@ -43,7 +43,6 @@ class _PasswordsState extends ConsumerState<Passwords> {
   late List<PasswordModel> _passwords = [];
   List<FolderModel> _folders = []; // Each folder can have a list of passwords
   final Map<String, bool> _folderExpansionState = {}; // Track the expansion state per folder
-  final Map<String, bool> _passwordVisibilityState = {}; // Track password visibility per password ID
   bool isOrganizeMode = false; // New variable to track organize mode
 
   @override
@@ -121,33 +120,6 @@ class _PasswordsState extends ConsumerState<Passwords> {
     });
   }
 
-  void _showDeleteConfirmation(String passwordId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return DeleteConfirmationDialog(
-          passwordId: passwordId,
-          onDelete: () => _deletePassword(passwordId),
-        );
-      },
-    );
-  }
-
-  void _editPassword(PasswordModel password) {
-    showModalBottomSheet(
-      isDismissible: false,
-      context: context,
-      useSafeArea: true,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return AddPasswordDialog(
-          passwordModel: password,
-          onSuccess: _reloadPasswords,
-        );
-      },
-    );
-  }
-
   void _reloadPasswords() {
     _loadPasswords();
   }
@@ -159,33 +131,6 @@ class _PasswordsState extends ConsumerState<Passwords> {
   void _reloadAllData() {
     _loadPasswords();
     _loadFolders();
-  }
-
-  void _togglePasswordVisibility(String passwordId) {
-    setState(() {
-      _passwordVisibilityState[passwordId] = !(_passwordVisibilityState[passwordId] ?? true);
-    });
-  }
-
-  bool _copyToClipboard(String password) {
-    try {
-      Clipboard.setData(ClipboardData(text: password));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  void _openWebPage(String url) async {
-    String formattedUrl = url.startsWith('http') ? url : 'https://$url';
-    var uri = Uri.parse(formattedUrl); // Convert string to Uri
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri,
-          mode: LaunchMode.inAppWebView,
-          webViewConfiguration: const WebViewConfiguration(enableJavaScript: true));
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 
   @override
@@ -590,11 +535,79 @@ class _PasswordsState extends ConsumerState<Passwords> {
   }
 
   Widget _buildPasswordCard(PasswordModel password) {
+    return PasswordCard(
+      password: password,
+      isOrganizeMode: isOrganizeMode,
+      onUpdate: _reloadAllData,
+      onDelete: _deletePassword,
+    );
+  }
+}
+
+// Separate stateful widget for password card to prevent full page rebuild on visibility toggle
+class PasswordCard extends StatefulWidget {
+  final PasswordModel password;
+  final bool isOrganizeMode;
+  final VoidCallback onUpdate;
+  final Function(String) onDelete;
+
+  const PasswordCard({
+    super.key,
+    required this.password,
+    required this.isOrganizeMode,
+    required this.onUpdate,
+    required this.onDelete,
+  });
+
+  @override
+  State<PasswordCard> createState() => _PasswordCardState();
+}
+
+class _PasswordCardState extends State<PasswordCard> {
+  late bool _isObscured;
+
+  @override
+  void initState() {
+    super.initState();
+    _isObscured = true; // Default to obscured
+  }
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isObscured = !_isObscured;
+    });
+  }
+
+  bool _copyToClipboard(String password) {
+    try {
+      Clipboard.setData(ClipboardData(text: password));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  void _openWebPage(String url) async {
+    if (url.isEmpty) return;
+    
+    String formattedUrl = url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      formattedUrl = 'https://$url';
+    }
+    
+    final Uri uri = Uri.parse(formattedUrl);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var height = AppStyles.viewHeight(context);
     var width = AppStyles.viewWidth(context);
 
     return LongPressDraggable<PasswordModel>(
-      data: password,
+      data: widget.password,
       feedback: Material(
         color: Colors.transparent,
         child: Container(
@@ -622,7 +635,7 @@ class _PasswordsState extends ConsumerState<Passwords> {
               const SizedBox(width: 8.0), // Spacing between icon and text
               Expanded(
                 child: Text(
-                  password.passwordTitle,
+                  widget.password.passwordTitle,
                   style: AppStyles.customText(
                     context,
                     sizeFactor: 0.04,
@@ -646,7 +659,7 @@ class _PasswordsState extends ConsumerState<Passwords> {
             size: width * 0.06,
           ),
           title: Text(
-            password.passwordTitle,
+            widget.password.passwordTitle,
             style: AppStyles.customText(
               context,
               sizeFactor: 0.04,
@@ -662,13 +675,13 @@ class _PasswordsState extends ConsumerState<Passwords> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (password.siteLink != null && password.siteLink!.isNotEmpty) ...{
+                  if (widget.password.siteLink != null && widget.password.siteLink!.isNotEmpty) ...{
                     GestureDetector(
-                        onTap: () => _openWebPage(password.siteLink ?? ''),
+                        onTap: () => _openWebPage(widget.password.siteLink ?? ''),
                         child: Row(
                           children: [
                             Text(
-                              password.siteLink ?? '',
+                              widget.password.siteLink ?? '',
                               style: AppStyles.customText(
                                 context,
                                 sizeFactor: 0.038,
@@ -700,7 +713,7 @@ class _PasswordsState extends ConsumerState<Passwords> {
                           ? AppColor.whiteColor
                           : AppColor.blackColor,
                     ),
-                    controller: TextEditingController(text: password.savedPassword),
+                    controller: TextEditingController(text: widget.password.savedPassword),
                     decoration: InputDecoration(
                       labelText: 'Password',
                       border: const OutlineInputBorder(),
@@ -710,7 +723,7 @@ class _PasswordsState extends ConsumerState<Passwords> {
                         children: [
                           IconButton(
                             onPressed: () {
-                              bool res = _copyToClipboard(password.savedPassword);
+                              bool res = _copyToClipboard(widget.password.savedPassword);
                               if (res) {
                                 AppStyles.showSuccess(
                                   context,
@@ -726,20 +739,20 @@ class _PasswordsState extends ConsumerState<Passwords> {
                             icon: const Icon(Icons.copy),
                           ),
                           IconButton(
-                            onPressed: () => _togglePasswordVisibility(password.passwordId),
-                            icon: (_passwordVisibilityState[password.passwordId] ?? true)
+                            onPressed: _togglePasswordVisibility,
+                            icon: _isObscured
                                 ? const Icon(Icons.visibility)
                                 : const Icon(Icons.visibility_off),
                           ),
                         ],
                       ),
                     ),
-                    obscureText: _passwordVisibilityState[password.passwordId] ?? true,
+                    obscureText: _isObscured,
                     readOnly: true,
                   ),
                   SizedBox(height: height * 0.02),
                   TextField(
-                    controller: TextEditingController(text: password.passwordDescription),
+                    controller: TextEditingController(text: widget.password.passwordDescription),
                     style: AppStyles.customText(
                       context,
                       sizeFactor: 0.03,
@@ -758,26 +771,48 @@ class _PasswordsState extends ConsumerState<Passwords> {
                     ),
                     readOnly: true,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.delete,
-                          size: width * 0.051,
+                  if (!widget.isOrganizeMode) ...{
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            size: width * 0.051,
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => DeleteConfirmationDialog(
+                                passwordId: widget.password.passwordId,
+                                onDelete: () => widget.onDelete(widget.password.passwordId),
+                              ),
+                            );
+                          },
                         ),
-                        onPressed: () => _showDeleteConfirmation(
-                            password.passwordId), // Show confirmation before deleting
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.edit,
-                          size: width * 0.05,
+                        IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            size: width * 0.05,
+                          ),
+                          onPressed: () {
+                            showModalBottomSheet(
+                              isDismissible: false,
+                              context: context,
+                              useSafeArea: true,
+                              isScrollControlled: true,
+                              builder: (BuildContext context) {
+                                return AddPasswordDialog(
+                                  passwordModel: widget.password,
+                                  onSuccess: widget.onUpdate,
+                                );
+                              },
+                            );
+                          },
                         ),
-                        onPressed: () => _editPassword(password),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  },
                 ],
               ),
             ),
