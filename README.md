@@ -98,7 +98,7 @@ All your passwords are stored locally and encrypted on your device with **256-bi
 </a>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <a href="https://play.google.com/store/apps/details?id=com.adarsh.password_vault">
-  <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Get it on Google Play" height="40" style="vertical-align: middle;">
+  <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Get it on Google Play" height="50" style="vertical-align: middle;">
 </a>
 
 **iOS**: Requires iOS 12.0 or later  
