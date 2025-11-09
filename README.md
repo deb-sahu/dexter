@@ -159,7 +159,6 @@ Dexter is built with cutting-edge technologies to ensure security, performance, 
 - [ ] **Secure Notes**: Store encrypted text notes
 - [ ] **Personal Cloud Sync**: Optional self-hosted cloud backup
 - [ ] **Browser Extensions**: Chrome, Firefox, Safari extensions
-- [ ] **Password Health Check**: Identify weak or reused passwords
 - [ ] **Two-Factor Authentication (2FA)**: Built-in 2FA token generator
 - [ ] **Breach Monitoring**: Check if passwords appear in data breaches
 
@@ -203,7 +202,7 @@ Please read my [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
 ### Privacy Promise
 - ✅ **No accounts required** - Use immediately without signup
-- ✅ **100% offline** - No internet connection needed
+- ✅ **100% offline** - No internet connection needed, no cloud syncs
 - ✅ **No data collection** - We don't track, log, or analyze anything
 - ✅ **No third-party services** - No analytics, no ads, no tracking
 - ✅ **Open source** - Code is transparent and auditable
