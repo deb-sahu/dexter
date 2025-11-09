@@ -95,7 +95,7 @@ class _LoginState extends ConsumerState<Login> with SingleTickerProviderStateMix
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        'All your passwords in one place',
+                        'All your passwords, securely offline',
                         style: AppStyles.greyText(context, true),
                       ),
                     ],

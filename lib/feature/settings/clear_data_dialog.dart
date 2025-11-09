@@ -3,9 +3,16 @@ import 'package:password_vault/constants/common_exports.dart';
 import 'package:password_vault/service/cache/cache_service.dart';
 import 'package:password_vault/service/singletons/theme_change_manager.dart';
 
-final clearAllDataNotifierProvider = StateProvider<bool>((ref) {
-  return false;
-});
+class ClearAllDataNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+  
+  void update(bool value) => state = value;
+}
+
+final clearAllDataNotifierProvider = NotifierProvider<ClearAllDataNotifier, bool>(
+  ClearAllDataNotifier.new,
+);
 
 class ClearDataDialog extends ConsumerWidget {
   const ClearDataDialog({super.key});
@@ -42,7 +49,7 @@ class ClearDataDialog extends ConsumerWidget {
           onPressed: () async {
             bool success = await CacheService().clearAllData();
             if (success) {
-              ref.read(clearAllDataNotifierProvider.notifier).update((state) => true);
+              ref.read(clearAllDataNotifierProvider.notifier).update(true);
               // Data cleared successfully
               if (context.mounted) {
                 AppStyles.showSuccess(context, 'Data cleared successfully');

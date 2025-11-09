@@ -31,6 +31,7 @@ class DeleteConfirmationDialog extends ConsumerWidget {
               style: AppStyles.customText(
                 context,
                 color: AppColor.whiteColor,
+                weight: FontWeight.bold,
               )),
         ),
         TextButton(
@@ -43,6 +44,7 @@ class DeleteConfirmationDialog extends ConsumerWidget {
             style: AppStyles.customText(
               context,
               color: AppColor.whiteColor,
+              weight: FontWeight.bold,
             ),
           ),
         ),

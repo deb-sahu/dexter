@@ -16,9 +16,16 @@ import 'package:password_vault/service/singletons/theme_change_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/common_exports.dart';
 
-final deletePasswordNotifierProvider = StateProvider<bool>((ref) {
-  return false;
-});
+class DeletePasswordNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+  
+  void update(bool value) => state = value;
+}
+
+final deletePasswordNotifierProvider = NotifierProvider<DeletePasswordNotifier, bool>(
+  DeletePasswordNotifier.new,
+);
 
 class Passwords extends ConsumerStatefulWidget {
   const Passwords({super.key});
@@ -33,10 +40,10 @@ class _PasswordsState extends ConsumerState<Passwords> {
   late TextEditingController _titleController;
   late TextEditingController _linkController;
   late TextEditingController _descriptionController;
-  late bool _isObscured = true;
   late List<PasswordModel> _passwords = [];
   List<FolderModel> _folders = []; // Each folder can have a list of passwords
   final Map<String, bool> _folderExpansionState = {}; // Track the expansion state per folder
+  final Map<String, bool> _passwordVisibilityState = {}; // Track password visibility per password ID
   bool isOrganizeMode = false; // New variable to track organize mode
 
   @override
@@ -63,8 +70,8 @@ class _PasswordsState extends ConsumerState<Passwords> {
     try {
       _folders =
           await CacheService().getFoldersData(); // Assuming _folders is a list to hold folder data
-      ref.read(clearAllDataNotifierProvider.notifier).update((state) => false);
-      ref.read(importChangeProvider.notifier).update((state) => false);
+      ref.read(clearAllDataNotifierProvider.notifier).update(false);
+      ref.read(importChangeProvider.notifier).update(false);
     } catch (e) {
       _folders = []; // In case of error, return an empty list
     }
@@ -76,8 +83,8 @@ class _PasswordsState extends ConsumerState<Passwords> {
   Future<void> _loadPasswords() async {
     try {
       _passwords = await CacheService().getPasswordsData();
-      ref.read(clearAllDataNotifierProvider.notifier).update((state) => false);
-      ref.read(importChangeProvider.notifier).update((state) => false);
+      ref.read(clearAllDataNotifierProvider.notifier).update(false);
+      ref.read(importChangeProvider.notifier).update(false);
     } catch (e) {
       _passwords = [];
     }
@@ -96,14 +103,20 @@ class _PasswordsState extends ConsumerState<Passwords> {
 
   void _deletePassword(String passwordId) {
     CacheService().deletePasswordRecord(passwordId).then((success) {
+      if (!mounted) return;
+      
       if (success) {
         setState(() {
           _passwords.removeWhere((password) => password.passwordId == passwordId);
-          ref.read(deletePasswordNotifierProvider.notifier).update((state) => true);
+          ref.read(deletePasswordNotifierProvider.notifier).update(true);
         });
-        AppStyles.showSuccess(context, 'Password deleted successfully');
+        if (mounted) {
+          AppStyles.showSuccess(context, 'Password deleted successfully');
+        }
       } else {
-        AppStyles.showError(context, 'Error deleting password');
+        if (mounted) {
+          AppStyles.showError(context, 'Error deleting password');
+        }
       }
     });
   }
@@ -148,9 +161,9 @@ class _PasswordsState extends ConsumerState<Passwords> {
     _loadFolders();
   }
 
-  void _togglePasswordVisibility() {
+  void _togglePasswordVisibility(String passwordId) {
     setState(() {
-      _isObscured = !_isObscured;
+      _passwordVisibilityState[passwordId] = !(_passwordVisibilityState[passwordId] ?? true);
     });
   }
 
@@ -204,7 +217,7 @@ class _PasswordsState extends ConsumerState<Passwords> {
         ),
         actions: [
           IconButton(
-            tooltip: 'Organize',
+            tooltip: isOrganizeMode ? 'Exit organize mode' : 'Organize passwords & folders',
             icon: Icon(
               isOrganizeMode ? Icons.space_dashboard_rounded : Icons.space_dashboard_outlined,
               color: AppColor.primaryColor,
@@ -214,6 +227,29 @@ class _PasswordsState extends ConsumerState<Passwords> {
               setState(() {
                 isOrganizeMode = !isOrganizeMode;
               });
+              
+              // Show helpful message when entering organize mode
+              if (isOrganizeMode && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Long-press and drag passwords to move them between folders',
+                      style: AppStyles.customText(
+                        context,
+                        sizeFactor: 0.035,
+                        color: AppColor.whiteColor,
+                      ),
+                    ),
+                    duration: const Duration(seconds: 4),
+                    backgroundColor: AppColor.primaryColor,
+                    action: SnackBarAction(
+                      label: 'Got it',
+                      onPressed: () {},
+                      textColor: AppColor.whiteColor,
+                    ),
+                  ),
+                );
+              }
             },
           ),
         ],
@@ -268,6 +304,51 @@ class _PasswordsState extends ConsumerState<Passwords> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: height * 0.015),
+            // Organize mode info banner
+            if (isOrganizeMode) ...{
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(
+                  horizontal: width * 0.04,
+                  vertical: height * 0.015,
+                ),
+                margin: EdgeInsets.only(bottom: height * 0.01),
+                decoration: BoxDecoration(
+                  color: AppColor.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppColor.primaryColor.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      color: AppColor.primaryColor,
+                      size: 20,
+                    ),
+                    SizedBox(width: width * 0.03),
+                    Expanded(
+                      child: Text(
+                        'Long-press and drag to reorder',
+                        style: AppStyles.customText(
+                          context,
+                          sizeFactor: 0.032,
+                          color: AppColor.primaryColor,
+                          weight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.drag_indicator,
+                      color: AppColor.primaryColor,
+                      size: 20,
+                    ),
+                  ],
+                ),
+              ),
+            },
             Expanded(
               child: _folders.isEmpty && passwordsOutsideFolders.isEmpty
                   ? const EmptyStateIllustration(
@@ -333,6 +414,7 @@ class _PasswordsState extends ConsumerState<Passwords> {
                         // Main ListView for folders and passwords outside folders
                         Expanded(
                           child: ListView.builder(
+                            padding: EdgeInsets.only(bottom: height * 0.12), // Prevent FAB overlap
                             itemCount:
                                 _folders.length + passwordsOutsideFolders.length, // Combined count
                             itemBuilder: (context, index) {
@@ -644,15 +726,15 @@ class _PasswordsState extends ConsumerState<Passwords> {
                             icon: const Icon(Icons.copy),
                           ),
                           IconButton(
-                            onPressed: _togglePasswordVisibility,
-                            icon: _isObscured
+                            onPressed: () => _togglePasswordVisibility(password.passwordId),
+                            icon: (_passwordVisibilityState[password.passwordId] ?? true)
                                 ? const Icon(Icons.visibility)
                                 : const Icon(Icons.visibility_off),
                           ),
                         ],
                       ),
                     ),
-                    obscureText: _isObscured,
+                    obscureText: _passwordVisibilityState[password.passwordId] ?? true,
                     readOnly: true,
                   ),
                   SizedBox(height: height * 0.02),

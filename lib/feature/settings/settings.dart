@@ -9,9 +9,16 @@ import 'package:password_vault/service/cache/cache_service.dart';
 import 'package:password_vault/service/singletons/theme_change_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final importChangeProvider = StateProvider<bool>((ref) {
-  return false;
-});
+class ImportChangeNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+  
+  void update(bool value) => state = value;
+}
+
+final importChangeProvider = NotifierProvider<ImportChangeNotifier, bool>(
+  ImportChangeNotifier.new,
+);
 
 class Settings extends ConsumerWidget {
   const Settings({super.key});
@@ -42,7 +49,7 @@ class Settings extends ConsumerWidget {
             ),
             onPressed: () async {
               // Direct to my website for support
-              var uri = Uri.parse('https://www.adarsh7.dev');
+              var uri = Uri.parse('https://www.theadarsh.dev');
               if (await canLaunchUrl(uri)) {
                 await launchUrl(uri);
               } else {
@@ -77,7 +84,7 @@ class Settings extends ConsumerWidget {
                 value: ThemeChangeService().getThemeChangeValue(),
                 onChanged: (value) async {
                   await CacheService().updateThemeMode(value);
-                  ref.read(themeChangeProvider.notifier).state = value;
+                  ref.read(themeChangeProvider.notifier).update(value);
                 },
               ),
             ),
@@ -151,7 +158,7 @@ class Settings extends ConsumerWidget {
                       var bool = await CacheService().importDataFromFile(filePath);
                       if (context.mounted) {
                         if (bool) {
-                          ref.read(importChangeProvider.notifier).update((state) => true);
+                          ref.read(importChangeProvider.notifier).update(true);
                           AppStyles.showSuccess(context, 'Data imported successfully');
                         } else {
                           AppStyles.showError(context, 'Error in importing data');

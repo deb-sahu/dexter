@@ -38,11 +38,11 @@ class _HomeState extends ConsumerState<Home> {
     try {
       await CacheService().updateFirstLogin(false); // Update first login to false after first login
       favoritePasswords = await CacheService().getFavouritesData();
-      ref.read(deletePasswordNotifierProvider.notifier).update((state) => false);
-      ref.read(changeFavoritesdNotifierProvider.notifier).update((state) => false);
-      ref.read(clearAllDataNotifierProvider.notifier).update((state) => false);
-      ref.read(importChangeProvider.notifier).update((state) => false);
-      ref.read(updatePasswordProvider.notifier).update((state) => false);
+      ref.read(deletePasswordNotifierProvider.notifier).update(false);
+      ref.read(changeFavoritesdNotifierProvider.notifier).update(false);
+      ref.read(clearAllDataNotifierProvider.notifier).update(false);
+      ref.read(importChangeProvider.notifier).update(false);
+      ref.read(updatePasswordProvider.notifier).update(false);
     } catch (e) {
       favoritePasswords = [];
     }
@@ -72,9 +72,11 @@ class _HomeState extends ConsumerState<Home> {
         actions: [
           IconButton(
             onPressed: () {
-              showDialog(
-                barrierDismissible: false,
+              showModalBottomSheet(
+                isDismissible: false,
                 context: context,
+                useSafeArea: true,
+                isScrollControlled: true,
                 builder: (context) => const FavoritesDialog(),
               );
             },
