@@ -75,10 +75,13 @@ All your passwords are stored locally and encrypted on your device with **256-bi
 
 <div align="center">
 
-| Home Screen | Passwords | Favorites | Settings |
-|:-----------:|:---------:|:---------:|:--------:|
-| ![Home](screenshots/home.png) | ![Passwords](screenshots/passwords.png) | ![Favorites](screenshots/favorites.png) | ![Settings](screenshots/settings.png) |
+| Launch Screen | Home Screen | Passwords | Favorites |
+|:-------------:|:-----------:|:---------:|:---------:|
+| ![Launch](screenshots/launch-screen.png) | ![Home](screenshots/home.png) | ![Passwords](screenshots/passwords.png) | ![Favorites](screenshots/favorites.png) |
 
+| Organizer | History | Settings |
+|:---------:|:-------:|:--------:|
+| ![Organizer](screenshots/organizer.png) | ![History](screenshots/history.png) | ![Settings](screenshots/settings.png) |
 
 </div>
 
@@ -90,9 +93,13 @@ All your passwords are stored locally and encrypted on your device with **256-bi
 
 ### Get Dexter on Your Device
 
-[![Download on App Store](https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp)](https://apps.apple.com/us/app/dexter-password-manager/id6738388602)
+<a href="https://apps.apple.com/us/app/dexter-password-manager/id6738388602">
+  <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp" alt="Download on App Store" height="60">
+</a>
 &nbsp;&nbsp;&nbsp;&nbsp;
-[![Get it on Google Play](https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.adarsh.password_vault)
+<a href="https://play.google.com/store/apps/details?id=com.adarsh.password_vault">
+  <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Get it on Google Play" height="60">
+</a>
 
 **iOS**: Requires iOS 12.0 or later  
 **Android**: Requires Android 8.0 (API 26) or later
