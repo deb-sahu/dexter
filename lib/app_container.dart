@@ -7,7 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-final themeChangeProvider = StateProvider<bool?>((ref) => null);
+class ThemeChangeNotifier extends Notifier<bool?> {
+  @override
+  bool? build() => null;
+  
+  void update(bool? value) => state = value;
+}
+
+final themeChangeProvider = NotifierProvider<ThemeChangeNotifier, bool?>(
+  ThemeChangeNotifier.new,
+);
 
 final themeCacheProvider = FutureProvider<bool>((ref) async {
   return await CacheService().getThemeMode();

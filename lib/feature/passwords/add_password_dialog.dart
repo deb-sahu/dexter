@@ -9,9 +9,16 @@ import 'package:password_vault/service/cache/cache_service.dart';
 import 'package:password_vault/service/singletons/theme_change_manager.dart';
 import 'package:uuid/uuid.dart';
 
-final updatePasswordProvider = StateProvider<bool>((ref) {
-  return false;
-});
+class UpdatePasswordNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+  
+  void update(bool value) => state = value;
+}
+
+final updatePasswordProvider = NotifierProvider<UpdatePasswordNotifier, bool>(
+  UpdatePasswordNotifier.new,
+);
 
 class AddPasswordDialog extends ConsumerStatefulWidget {
   final PasswordModel? passwordModel;
@@ -114,7 +121,7 @@ class _AddPasswordDialogState extends ConsumerState<AddPasswordDialog> {
           AppStyles.showSuccess(context,
               passwordExists ? 'Password updated successfully.' : 'Password added successfully.');
           widget.onSuccess(); // Callback function
-          ref.read(updatePasswordProvider.notifier).update((state) => true);
+          ref.read(updatePasswordProvider.notifier).update(true);
           Navigator.pop(context);
         } else {
           AppStyles.showError(context, 'Failed to add password. Please try again.');
@@ -185,7 +192,9 @@ class _AddPasswordDialogState extends ConsumerState<AddPasswordDialog> {
                   child: Text(
                     'Cancel',
                     style: AppStyles.customText(context,
-                        color: AppColor.primaryColor, sizeFactor: 0.04),
+                        color: AppColor.primaryColor, 
+                        sizeFactor: 0.04,
+                        weight: FontWeight.bold),
                   ),
                 ),
                 TextButton(
@@ -197,12 +206,16 @@ class _AddPasswordDialogState extends ConsumerState<AddPasswordDialog> {
                       ? Text(
                           'Update',
                           style: AppStyles.customText(context,
-                              color: AppColor.primaryColor, sizeFactor: 0.04),
+                              color: AppColor.primaryColor,
+                              sizeFactor: 0.04,
+                              weight: FontWeight.bold),
                         )
                       : Text(
                           'Save',
                           style: AppStyles.customText(context,
-                              color: AppColor.primaryColor, sizeFactor: 0.04),
+                              color: AppColor.primaryColor,
+                              sizeFactor: 0.04,
+                              weight: FontWeight.bold),
                         ),
                 ),
               ],
@@ -292,7 +305,8 @@ class _AddPasswordDialogState extends ConsumerState<AddPasswordDialog> {
                         _passwordController.text = newPassword;
                         _checkPasswordStrength(newPassword);
                       },
-                      icon: const Icon(Icons.password_rounded), // Suggestion icon
+                      tooltip: 'Generate strong password',
+                      icon: const Icon(Icons.auto_mode_rounded), // Auto-generate icon
                     ),
                   ],
                 ),

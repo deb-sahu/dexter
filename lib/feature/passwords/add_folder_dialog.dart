@@ -87,7 +87,7 @@ class _AddFolderDialogState extends ConsumerState<AddFolderDialog> {
     ThemeChangeService().initializeThemeChange(ref, themeChange);
 
     return SizedBox(
-      height: height * 0.75, // Adjusted height for the folder dialog
+      height: height * 0.78, // Consistent height across all bottom sheets
       child: Padding(
         padding: EdgeInsets.all(width * 0.06),
         child: Column(
@@ -105,7 +105,9 @@ class _AddFolderDialogState extends ConsumerState<AddFolderDialog> {
                   child: Text(
                     'Cancel',
                     style: AppStyles.customText(context,
-                        color: AppColor.primaryColor, sizeFactor: 0.04),
+                        color: AppColor.primaryColor, 
+                        sizeFactor: 0.04,
+                        weight: FontWeight.bold),
                   ),
                 ),
                 TextButton(
@@ -117,12 +119,16 @@ class _AddFolderDialogState extends ConsumerState<AddFolderDialog> {
                       ? Text(
                           'Update',
                           style: AppStyles.customText(context,
-                              color: AppColor.primaryColor, sizeFactor: 0.04),
+                              color: AppColor.primaryColor,
+                              sizeFactor: 0.04,
+                              weight: FontWeight.bold),
                         )
                       : Text(
                           'Create',
                           style: AppStyles.customText(context,
-                              color: AppColor.primaryColor, sizeFactor: 0.04),
+                              color: AppColor.primaryColor,
+                              sizeFactor: 0.04,
+                              weight: FontWeight.bold),
                         ),
                 ),
               ],

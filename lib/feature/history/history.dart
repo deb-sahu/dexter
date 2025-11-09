@@ -11,7 +11,16 @@ import 'package:password_vault/feature/widget_utils/custom_empty_state_illustart
 import 'package:password_vault/service/cache/cache_service.dart';
 import 'package:password_vault/service/singletons/theme_change_manager.dart';
 
-final filterProvider = StateProvider<String>((ref) => 'Past Week');
+class FilterNotifier extends Notifier<String> {
+  @override
+  String build() => 'Past Week';
+  
+  void update(String value) => state = value;
+}
+
+final filterProvider = NotifierProvider<FilterNotifier, String>(
+  FilterNotifier.new,
+);
 
 final filteredPasswordHistoryProvider = FutureProvider<List<HistoryModel>>((ref) async {
   final filter = ref.watch(filterProvider);
@@ -28,7 +37,7 @@ final filteredPasswordHistoryProvider = FutureProvider<List<HistoryModel>>((ref)
       filteredHistory =
           allHistory.where((item) => now.difference(item.timestamp).inDays <= 30).toList();
       break;
-    case 'Past Six Months':
+    case 'Past 6 Months':
       filteredHistory =
           allHistory.where((item) => now.difference(item.timestamp).inDays <= 182).toList();
       break;
@@ -91,26 +100,33 @@ class History extends ConsumerWidget {
             padding: EdgeInsets.only(right: width * 0.04),
             child: DropdownButton<String>(
               value: filter,
-              icon: Icon(Icons.sort_rounded,
-                  color: AppColor.primaryColor, size: AppStyles.appIconSize(context)),
+              icon: Padding(
+                padding: EdgeInsets.only(left: width * 0.02),
+                child: Icon(Icons.sort_rounded,
+                    color: AppColor.primaryColor, size: AppStyles.appIconSize(context)),
+              ),
+              underline: const SizedBox(),
               onChanged: (String? newValue) {
                 if (newValue != null) {
-                  ref.read(filterProvider.notifier).state = newValue;
+                  ref.read(filterProvider.notifier).update(newValue);
                   _loadHistory(ref);
                 }
               },
-              items: <String>['Past Week', 'Past Month', 'Past Six Months']
+              items: <String>['Past Week', 'Past Month', 'Past 6 Months']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(
-                    value,
-                    style: AppStyles.customText(context,
-                        sizeFactor: 0.031,
-                        color: ThemeChangeService().getThemeChangeValue()
-                            ? AppColor.whiteColor
-                            : AppColor.grey_800,
-                        weight: FontWeight.w600),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: width * 0.015),
+                    child: Text(
+                      value,
+                      style: AppStyles.customText(context,
+                          sizeFactor: 0.031,
+                          color: ThemeChangeService().getThemeChangeValue()
+                              ? AppColor.whiteColor
+                              : AppColor.grey_800,
+                          weight: FontWeight.w600),
+                    ),
                   ),
                 );
               }).toList(),

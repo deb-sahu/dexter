@@ -9,7 +9,16 @@ import 'package:password_vault/feature/widget_utils/custom_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:password_vault/service/singletons/theme_change_manager.dart';
 
-final bottomNavIndexProvider = StateProvider((ref) => 0);
+class BottomNavIndexNotifier extends Notifier<int> {
+  @override
+  int build() => 0;
+  
+  void update(int value) => state = value;
+}
+
+final bottomNavIndexProvider = NotifierProvider<BottomNavIndexNotifier, int>(
+  BottomNavIndexNotifier.new,
+);
 class NavRoute extends ConsumerWidget {
  const NavRoute({super.key});
   
@@ -76,7 +85,7 @@ class NavRoute extends ConsumerWidget {
         selectedLabelStyle: AppStyles.bottomNavSelectedText(context), 
         unselectedLabelStyle: AppStyles.bottomNavUnselectedText(context), 
         onTap: (index) {
-          ref.read(bottomNavIndexProvider.notifier).update((state) => index);
+          ref.read(bottomNavIndexProvider.notifier).update(index);
         },
       ),
     );
