@@ -4,7 +4,7 @@ description: A flutter application to store and manage passwords offline and sec
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.3.0+1
+version: 1.3.0+12
 
 environment:
   sdk: '>=3.0.1 <4.0.0'
