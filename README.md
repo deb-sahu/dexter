@@ -95,10 +95,10 @@ All your passwords are stored locally and encrypted on your device with **256-bi
 
 <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
   <a href="https://apps.apple.com/us/app/dexter-password-manager/id6738388602">
-    <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp" alt="Download on App Store" height="60" style="padding-bottom: 5px;">
+    <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp" alt="Download on App Store" height="60">
   </a>
   <a href="https://play.google.com/store/apps/details?id=com.adarsh.password_vault">
-    <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Get it on Google Play" height="56">
+    <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Get it on Google Play" height="52">
   </a>
 </div>
 
